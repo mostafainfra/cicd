@@ -3,7 +3,7 @@ name: Build and deploy ASP.Net Core app to Azure Web App - testmmmm(devv)
 on:
   push:
     branches:
-      - dev
+      - dev  # Déclenchement lors d'un push sur la branche dev
   workflow_dispatch:
 
 jobs:
@@ -14,7 +14,7 @@ jobs:
       # Étape 1 : Cloner le dépôt GitHub
       - uses: actions/checkout@v4
 
-      # Étape 2 : Configurer .NET Core SDK
+      # Étape 2 : Configurer le SDK .NET Core
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
@@ -55,19 +55,19 @@ jobs:
         with:
           name: .net-app
 
-      # Étape 8 : Se connecter à Azure
+      # Étape 8 : Se connecter à Azure avec les secrets GitHub
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_64314A2093C24C16B81ABFB17E0DE192 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D97564FEA0BE4D4E9B925F7689563D95 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A5B3F2F57C17485A81C1AF4B829297E3 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
-      # Étape 9 : Déployer l'application sur Azure Web App
+      # Étape 9 : Déployer l'application sur Azure Web App dans le slot devv
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'testmmmm'  # Nom de votre application Azure Web App
-          slot-name: 'devv'
+          app-name: 'testmmmm'  # Nom de votre application Web
+          slot-name: 'devv'     # Nom du slot dans lequel vous déployez
           package: ./myapp

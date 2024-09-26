@@ -11,29 +11,22 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # Étape 1 : Récupérer le code du dépôt GitHub
       - uses: actions/checkout@v4
 
-      # Étape 2 : Installer le SDK .NET
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
 
-      # Étape 3 : Restaurer les dépendances du projet .NET
-      # Spécifiez le chemin correct vers le fichier .csproj
       - name: Restore dependencies
         run: dotnet restore ./HelloWorldApp/HelloWorldApp.csproj
 
-      # Étape 4 : Compiler le projet avec configuration "Release"
       - name: Build with dotnet
         run: dotnet build ./HelloWorldApp/HelloWorldApp.csproj --configuration Release
 
-      # Étape 5 : Publier l'application dans un répertoire de sortie
       - name: dotnet publish
         run: dotnet publish ./HelloWorldApp/HelloWorldApp.csproj -c Release -o ./myapp
 
-      # Étape 6 : Télécharger l'artefact pour le job de déploiement
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -47,16 +40,14 @@ jobs:
       name: 'devv'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write  # Requis pour demander le JWT
+      id-token: write
 
     steps:
-      # Étape 7 : Télécharger l'artefact créé dans le job de build
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
 
-      # Étape 8 : Se connecter à Azure avec les identifiants secrets
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -64,7 +55,6 @@ jobs:
           tenant-id: ${{ secrets.TENANT_ID }}
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
-      # Étape 9 : Déployer l'application sur Azure Web App
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3

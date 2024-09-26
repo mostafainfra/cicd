@@ -55,13 +55,13 @@ jobs:
         with:
           name: .net-app
 
-      # Étape 8 : Se connecter à Azure avec les secrets GitHub
+      # Étape 8 : Se connecter à Azure avec les secrets spécifiques
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_64314A2093C24C16B81A8FB17E0DE192 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A5B3F2F57C17485A81C1AF4B829297E3 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D97564FEA0BE4D4E89B25F7689563D95 }}
 
       # Étape 9 : Déployer l'application sur Azure Web App dans le slot devv
       - name: Deploy to Azure Web App

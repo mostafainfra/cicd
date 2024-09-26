@@ -3,7 +3,7 @@ name: Build and deploy ASP.Net Core app to Azure Web App - testmmmm(devv)
 on:
   push:
     branches:
-      - master
+      - dev
   workflow_dispatch:
 
 jobs:

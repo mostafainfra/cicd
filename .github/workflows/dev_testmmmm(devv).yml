@@ -3,7 +3,7 @@ name: Build and deploy ASP.Net Core app to Azure Web App - testmmmm(devv)
 on:
   push:
     branches:
-      - dev
+      - master
   workflow_dispatch:
 
 jobs:
@@ -11,32 +11,28 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # Cloner le dépôt GitHub
+      # Étape 1 : Cloner le dépôt GitHub
       - uses: actions/checkout@v4
 
-      # Lister les fichiers présents pour vérifier où se trouve le fichier .csproj
-      - name: List files
-        run: dir
-
-      # Configurer le SDK .NET
+      # Étape 2 : Configurer .NET Core SDK
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
 
-      # Restaurer les dépendances (ajuster le chemin selon la structure)
-      - name: Restore dependencies
-        run: dotnet restore ./HelloWorldApp/HelloWorldApp.csproj  # Modifiez ce chemin après avoir vu la structure
+      # Étape 3 : Afficher le contenu du répertoire (pour vérifier la structure des fichiers)
+      - name: Afficher le contenu du répertoire
+        run: dir
 
-      # Compiler le projet
+      # Étape 4 : Compiler l'application
       - name: Build with dotnet
-        run: dotnet build ./HelloWorldApp/HelloWorldApp.csproj --configuration Release
+        run: dotnet build --configuration Release
 
-      # Publier l'application
+      # Étape 5 : Publier l'application
       - name: dotnet publish
-        run: dotnet publish ./HelloWorldApp/HelloWorldApp.csproj -c Release -o ./myapp
+        run: dotnet publish -c Release -o ./myapp
 
-      # Télécharger l'artefact pour le job de déploiement
+      # Étape 6 : Télécharger l'artefact pour le job de déploiement
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -50,25 +46,28 @@ jobs:
       name: 'devv'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write
+      id-token: write # Ceci est requis pour demander le JWT
 
     steps:
+      # Étape 7 : Télécharger l'artefact du job de build
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
 
+      # Étape 8 : Se connecter à Azure
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.CLIENT_ID }}
-          tenant-id: ${{ secrets.TENANT_ID }}
-          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
+      # Étape 9 : Déployer l'application sur Azure Web App
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'testmmmm'
+          app-name: 'testmmmm'  # Nom de votre application Azure Web App
           slot-name: 'devv'
           package: ./myapp
